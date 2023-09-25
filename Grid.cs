@@ -7,13 +7,13 @@ namespace Snake;
 public class Grid
 {
     public Point Size { get; private set;}
-    private List<Edible> edibles = new();
+    private List<Item> items = new();
 
     public Grid(Point size)
     {
         Size = size;
-        var factory = new EdibleFactory("🍎", new GrowEatBehavior());
-        SpawnItem(factory, new List<Point>());
+        SpawnItem(new SimpleApple());
+        SpawnItem(new Bomb());
     }
 
     public void Render(IEnumerable<Snake> snakes)
@@ -24,7 +24,7 @@ public class Grid
             foreach (var snake in snakes)
                 if (snake.Occupies(location))
                     symbol = snake.Symbol;
-            foreach (var item in edibles)
+            foreach (var item in items)
                 if (item.Location == location)
                     symbol = item.Symbol;
             return symbol;
@@ -40,28 +40,28 @@ public class Grid
         }
     }
 
-    public bool TryEatFood(Snake snake)
+    public bool TryEatFood(Snake eater, List<Snake> others)
     {
-        Point snakeHead = snake.Head;
-        foreach (var edible in edibles)
-            if (edible.Location == snakeHead)
+        Point snakeHead = eater.Head;
+        foreach (var item in items)
+            if (item.Location == snakeHead)
             {
-                edibles.Remove(edible);
-                edible.Eat(this, snake);
+                items.Remove(item);
+                item.Eat(eater, others, this);
                 break;
             }
         return false;
     }
 
-    public void SpawnItem(EdibleFactory factory, IEnumerable<Point> excludedPositions)
+    public List<Point> VacantPositions(List<Snake> snakes)
     {
         List<Point> excludes = new List<Point>();
-        foreach (Point point in excludedPositions)
-            excludes.Add(point);
-        foreach(Edible item in edibles)
+        foreach (Snake snake in snakes)
+            excludes.Add(snake.Head);
+        foreach (Item item in items)
             excludes.Add(item.Location);
 
-        
+       // All possible positions except excludes
         var vacantPositions = new List<Point>();
         for (int y = 0; y < Size.Y; y++)
             for (int x = 0; x < Size.X; x++)
@@ -70,13 +70,19 @@ public class Grid
                 if (!excludes.Contains(p))
                     vacantPositions.Add(p);
             }
+        return vacantPositions;
+    }
 
+    // If there are vacant positions, wraps the edible in an Item and adds it to the list of items.
+    public void SpawnItem(IEdible edible)
+    {
+        var vacantPositions = VacantPositions(new List<Snake>());
         if (vacantPositions.Count > 0)
         {
             Random rand = new Random();
             int index = rand.Next(vacantPositions.Count);
             Point location = vacantPositions[index];
-            edibles.Add(factory.Make(location));
+            items.Add(new Item(edible, location));
         }
     }
 }

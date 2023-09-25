@@ -22,7 +22,6 @@ public class Snake
         this.keyMap = keyMap;
         parts = new List<Point> { initialLocation };
         Direction = initialDirection;
-
     }
 
     public void Turn(ConsoleKey key)
