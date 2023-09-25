@@ -1,57 +1,82 @@
-﻿namespace Snake;
+﻿using System.ComponentModel;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
+
+namespace Snake;
 
 public class Grid
 {
-    private int size;
-    private Point food;
+    public Point Size { get; private set;}
+    private List<Edible> edibles = new();
 
-    public Grid(int size)
+    public Grid(Point size)
     {
-        this.size = size;
-        SpawnFood(new List<Point>());
+        Size = size;
+        var factory = new EdibleFactory("🍎", new GrowEatBehavior());
+        SpawnItem(factory, new List<Point>());
     }
 
-    public void Render(Snake snake)
+    public void Render(IEnumerable<Snake> snakes)
     {
-        Console.Clear();
-        for (int y = 0; y < size; y++)
+        string SymbolAtLocation(Point location)
         {
-            for (int x = 0; x < size; x++)
-            {
-                Point p = new Point(x, y);
-                if (snake.Contains(p)) Console.Write("■ ");
-                else if (p == food) Console.Write("🍎");
-                else Console.Write("· ");
-            }
+            string symbol = "· ";
+            foreach (var snake in snakes)
+                if (snake.Occupies(location))
+                    symbol = snake.Symbol;
+            foreach (var item in edibles)
+                if (item.Location == location)
+                    symbol = item.Symbol;
+            return symbol;
+        }
+
+        Console.Clear();
+        // print grid with snake and items
+        for (int y = 0; y < Size.Y; y++)
+        {
+            for (int x = 0; x < Size.X; x++)
+                Console.Write(SymbolAtLocation(new Point(x, y)));
             Console.WriteLine();
         }
     }
 
-    public bool TryEatFood(Point snakeHead)
+    public bool TryEatFood(Snake snake)
     {
-        if (food == snakeHead)
-        {
-            SpawnFood(new List<Point> { snakeHead });
-            return true;
-        }
+        Point snakeHead = snake.Head;
+        foreach (var edible in edibles)
+            if (edible.Location == snakeHead)
+            {
+                edibles.Remove(edible);
+                edible.Eat(this, snake);
+                break;
+            }
         return false;
     }
 
-    private void SpawnFood(IEnumerable<Point> excludedPositions)
+    public void SpawnItem(EdibleFactory factory, IEnumerable<Point> excludedPositions)
     {
+        List<Point> excludes = new List<Point>();
+        foreach (Point point in excludedPositions)
+            excludes.Add(point);
+        foreach(Edible item in edibles)
+            excludes.Add(item.Location);
+
+        
         var vacantPositions = new List<Point>();
-        for (int y = 0; y < size; y++)
-            for (int x = 0; x < size; x++)
+        for (int y = 0; y < Size.Y; y++)
+            for (int x = 0; x < Size.X; x++)
             {
                 Point p = new Point(x, y);
-                if (!excludedPositions.Contains(p))
+                if (!excludes.Contains(p))
                     vacantPositions.Add(p);
             }
 
-        if (vacantPositions.Count == 0) return; // No vacant position to spawn food
-
-        Random rand = new Random();
-        int index = rand.Next(vacantPositions.Count);
-        food = vacantPositions[index];
+        if (vacantPositions.Count > 0)
+        {
+            Random rand = new Random();
+            int index = rand.Next(vacantPositions.Count);
+            Point location = vacantPositions[index];
+            edibles.Add(factory.Make(location));
+        }
     }
 }
