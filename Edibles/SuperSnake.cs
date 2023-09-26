@@ -6,8 +6,10 @@ public class SuperSnake : IEdible
     public void Eat (Snake eater, List<Snake> others, Grid grid)
     {
         eater.Grow();
-        eater.Symbol = "🔥";
-        eater.CrashEffectOnOther = new DieBehavior();
-        eater.CrashEffectOnSelf = new NoBehavior();
+        throw new NotImplementedException();
+        //eater.SetState(new TimedSnakeState(100, )
+        //eater.Symbol = "🔥";
+        //eater.CrashEffectOnOther = new DieBehavior();
+        //eater.CrashEffectOnSelf = new NoBehavior();
     }
 }

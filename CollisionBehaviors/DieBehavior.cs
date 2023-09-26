@@ -1,9 +1,8 @@
 ﻿using System;
-namespace Snake
+namespace Snake.CollisionBehaviors;
+
+public class DieCollisionBehavior : ICollisionBehavior
 {
-	public class DieBehavior : ICollisionBehavior
-	{
-		public void Execute(Snake snake)
-			=> snake.Dead = true;
-	}
+	public void Execute(Snake snake)
+		=> snake.Dead = true;
 }

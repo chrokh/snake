@@ -1,42 +1,53 @@
-﻿namespace Snake;
+﻿using Snake.MoveBehaviors;
+using Snake.TurnBehaviors;
+using Snake.LengthBehaviors;
+using Snake.CollisionBehaviors;
+
+namespace Snake;
 
 public class GameLoop
 {
     Grid grid;
     List<Snake> snakes = new();
 
-    List<Dictionary<ConsoleKey, Point>> keyMaps = new()
+    List<KeyMap> keyMaps = new()
     {
-        new () {
-            { ConsoleKey.UpArrow, new Point(0, -1) },
-            { ConsoleKey.DownArrow, new Point(0, 1) },
-            { ConsoleKey.LeftArrow, new Point(-1, 0) },
-            { ConsoleKey.RightArrow, new Point(1, 0) }
-        },
-        new () {
-            { ConsoleKey.W, new Point(0, -1) },
-            { ConsoleKey.S, new Point(0, 1) },
-            { ConsoleKey.A, new Point(-1, 0) },
-            { ConsoleKey.D, new Point(1, 0) }
-        },
-        new () {
-            { ConsoleKey.I, new Point(0, -1) },
-            { ConsoleKey.K, new Point(0, 1) },
-            { ConsoleKey.J, new Point(-1, 0) },
-            { ConsoleKey.L, new Point(1, 0) }
-        },
+        new(ConsoleKey.W, ConsoleKey.A, ConsoleKey.S, ConsoleKey.D),
+        new(ConsoleKey.UpArrow, ConsoleKey.LeftArrow, ConsoleKey.DownArrow, ConsoleKey.RightArrow),
+        new(ConsoleKey.I, ConsoleKey.J, ConsoleKey.K, ConsoleKey.L),
     };
 
     public void Run()
     {
         grid = new Grid(new Point(20, 20));
 
-        snakes.Add(new Snake("🟩", 4, new Point(0, 2), new Point(1, 0), keyMaps[0]));
-        snakes.Add(new Snake("🟪", 4, new Point(0, 4), new Point(1, 0), keyMaps[1]));
-        // snakes.Add(new Snake("3 ", new Point(0, 6), new Point(1, 0), keyMaps[2])
-        //{
-        //    CrashBehavior = new ShrinkAction(3),
-        //});
+        // Player 1
+        snakes.Add(new Snake
+            ("🟥"
+            , 4
+            , new Point(0, 3)
+            , new Point(1, 0)
+            , new RegularMoveBehavior()
+            , new RegularTurnBehavior(keyMaps[0])
+            , new GrowLengthBehavior()
+            , new ShrinkLengthBehavior()
+            , new DieCollisionBehavior()
+            , new NoCollisionBehavior()
+            ));
+
+        // Player 2
+        snakes.Add(new Snake
+            ("🟦"
+            , 4
+            , new Point(0, grid.Size.Y - 4)
+            , new Point(-1, 0)
+            , new RegularMoveBehavior()
+            , new RegularTurnBehavior(keyMaps[1])
+            , new GrowLengthBehavior()
+            , new ShrinkLengthBehavior()
+            , new DieCollisionBehavior()
+            , new NoCollisionBehavior()
+            ));
 
         while (true) // Main game loop
         {
@@ -72,8 +83,7 @@ public class GameLoop
                 break;
             }
 
-            int fps = 10;
-            Thread.Sleep(1000 / fps);
+            Thread.Sleep(1000 / Config.FPS);
         }
     }
 }

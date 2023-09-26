@@ -1,8 +1,7 @@
 ﻿using System;
-namespace Snake;
+namespace Snake.CollisionBehaviors;
 
 public interface ICollisionBehavior
 {
     void Execute(Snake snake);
 }
-

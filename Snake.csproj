@@ -7,4 +7,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="MoveBehaviors\" />
+    <None Remove="TurnBehaviors\" />
+    <None Remove="LengthBehaviors\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MoveBehaviors\" />
+    <Folder Include="TurnBehaviors\" />
+    <Folder Include="LengthBehaviors\" />
+  </ItemGroup>
 </Project>
