@@ -31,9 +31,9 @@ public class GameLoop
     {
         grid = new Grid(new Point(20, 20));
 
-        snakes.Add(new Snake("1 ", new Point(0, 2), new Point(1, 0), keyMaps[0]));
-        snakes.Add(new Snake("2 ", new Point(0, 4), new Point(1, 0), keyMaps[1]));
-        snakes.Add(new Snake("3 ", new Point(0, 6), new Point(1, 0), keyMaps[2]));
+        snakes.Add(new Snake("🟩", new Point(0, 2), new Point(1, 0), keyMaps[0]));
+        snakes.Add(new Snake("🟪", new Point(0, 4), new Point(1, 0), keyMaps[1]));
+        // snakes.Add(new Snake("3 ", new Point(0, 6), new Point(1, 0), keyMaps[2]));
 
         while (true) // Main game loop
         {
@@ -55,7 +55,7 @@ public class GameLoop
                         others.Add(other);
 
                 grid.TryEatFood(snake, others);
-                
+
                 //Console.WriteLine($"Score: {_scoreManager.Score}");
                 if (snake.Dead) deadSnakes++;
             }

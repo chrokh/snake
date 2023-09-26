@@ -6,18 +6,21 @@ namespace Snake;
 
 public class Grid
 {
-    public Point Size { get; private set;}
+    public Point Size { get; private set; }
     private List<Item> items = new();
 
     public Grid(Point size)
     {
         Size = size;
-        SpawnItem(new SimpleApple());
+        SpawnItem(new Apple());
         SpawnItem(new Bomb());
+        SpawnItem(new CountingApple(3, new Tree(3)));
+        SpawnItem(new Attack(2));
     }
 
     public void Render(IEnumerable<Snake> snakes)
     {
+        // TODO: Dead snakes should be printed first so that others can be printed on top of them.
         string SymbolAtLocation(Point location)
         {
             string symbol = "· ";
@@ -61,7 +64,7 @@ public class Grid
         foreach (Item item in items)
             excludes.Add(item.Location);
 
-       // All possible positions except excludes
+        // All possible positions except excludes
         var vacantPositions = new List<Point>();
         for (int y = 0; y < Size.Y; y++)
             for (int x = 0; x < Size.X; x++)

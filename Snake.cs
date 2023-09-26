@@ -1,4 +1,6 @@
-﻿namespace Snake;
+﻿using System.Collections.Generic;
+
+namespace Snake;
 
 public class Snake
 {
@@ -6,6 +8,7 @@ public class Snake
     public bool Dead { get; set; }
     public Point Direction;
     public Point Head => parts.First();
+    public int Score => parts.Count;
 
     private string symbol;
     public string Symbol
@@ -14,7 +17,7 @@ public class Snake
     }
 
     private List<Point> parts;
-    public Dictionary<ConsoleKey, Point> keyMap = new Dictionary<ConsoleKey, Point>();
+    private Dictionary<ConsoleKey, Point> keyMap = new Dictionary<ConsoleKey, Point>();
 
     public Snake(string symbol, Point initialLocation, Point initialDirection, Dictionary<ConsoleKey, Point> keyMap)
     {
@@ -47,9 +50,17 @@ public class Snake
         parts.RemoveAt(parts.Count - 1); // Remove last segment
     }
 
-    public void Grow()
+    public void Grow(int n=1)
     {
-        parts.Add(parts.Last()); // Add a new segment at the end
+        for(int i=0; i<n; i++)
+            parts.Add(parts.Last()); // Add a new segment at the end
+    }
+
+    public void Shrink(int n=1)
+    {
+        for (int i=0; i<n; i++)
+            if (parts.Count > 1)
+                parts.RemoveAt(parts.Count - 1);
     }
 
     public bool Occupies(Point point) => parts.Contains(point);
