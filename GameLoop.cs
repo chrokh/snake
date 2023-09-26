@@ -31,9 +31,12 @@ public class GameLoop
     {
         grid = new Grid(new Point(20, 20));
 
-        snakes.Add(new Snake("🟩", new Point(0, 2), new Point(1, 0), keyMaps[0]));
-        snakes.Add(new Snake("🟪", new Point(0, 4), new Point(1, 0), keyMaps[1]));
-        // snakes.Add(new Snake("3 ", new Point(0, 6), new Point(1, 0), keyMaps[2]));
+        snakes.Add(new Snake("🟩", 4, new Point(0, 2), new Point(1, 0), keyMaps[0]));
+        snakes.Add(new Snake("🟪", 4, new Point(0, 4), new Point(1, 0), keyMaps[1]));
+        // snakes.Add(new Snake("3 ", new Point(0, 6), new Point(1, 0), keyMaps[2])
+        //{
+        //    CrashBehavior = new ShrinkAction(3),
+        //});
 
         while (true) // Main game loop
         {
@@ -48,6 +51,7 @@ public class GameLoop
             foreach (Snake snake in snakes)
             {
                 snake.Move(grid.Size);
+                snake.CheckCollisions(snakes);
 
                 List<Snake> others = new();
                 foreach (var other in snakes)

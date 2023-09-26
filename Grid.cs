@@ -16,6 +16,7 @@ public class Grid
         SpawnItem(new Bomb());
         SpawnItem(new CountingApple(3, new Tree(3)));
         SpawnItem(new Attack(2));
+        SpawnItem(new SuperSnake());
     }
 
     public void Render(IEnumerable<Snake> snakes)

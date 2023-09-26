@@ -2,7 +2,7 @@
 
 public class Attack : IEdible
 {
-    public string Symbol => "🎯";
+    public string Symbol => "🚀";
 
     private int pieces;
 
